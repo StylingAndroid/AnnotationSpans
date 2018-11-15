@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Annotation Spans</string>
+    <string name="annotated_text">This is a string containing an <annotation format="bold">annotation</annotation> which we can use to <annotation format="italic">style</annotation> the substrings</string>
+</resources>
