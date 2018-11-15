@@ -17,8 +17,6 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private val boldSpan = StyleSpan(Typeface.BOLD)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,7 +33,8 @@ class MainActivity : AppCompatActivity() {
                 text.getSpans(0, text.length, Annotation::class.java)
                     .filter { it.key == "format" && it.value == "bold" }
                     .forEach { annotation ->
-                        spannableStringBuilder[text.getSpanStart(annotation)..text.getSpanEnd(annotation)] = boldSpan
+                        spannableStringBuilder[text.getSpanStart(annotation)..text.getSpanEnd(annotation)] =
+                                StyleSpan(Typeface.BOLD)
                     }
                 spannableStringBuilder.toSpannable()
             }.await()
