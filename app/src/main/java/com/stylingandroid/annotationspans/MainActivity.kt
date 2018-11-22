@@ -15,8 +15,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 private const val RELATIVE_SIZE = 0.5f
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private suspend fun processAnnotations(text: CharSequence?): CharSequence? {
         return if (text is SpannedString) {
-            async(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
                 val spannableStringBuilder = SpannableStringBuilder(text)
                 text.getSpans(0, text.length, Annotation::class.java)
                         .filter { it.key == "format" }
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                             text.processFormatAnnotations(annotation, spannableStringBuilder)
                         }
                 spannableStringBuilder.toSpannable()
-            }.await()
+            }
         } else {
             text
         }
