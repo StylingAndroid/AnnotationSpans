@@ -10,36 +10,50 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.set
 import androidx.core.text.toSpannable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CoroutineScope {
+
+    private lateinit var job: Job
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        GlobalScope.launch(Dispatchers.Main) {
+        job = Job()
+
+        launch {
             annotated_text.text = processAnnotations(annotated_text.text)
         }
     }
 
     private suspend fun processAnnotations(text: CharSequence?): CharSequence? {
         return if (text is SpannedString) {
-            GlobalScope.async {
+            async(Dispatchers.IO) {
                 val spannableStringBuilder = SpannableStringBuilder(text)
                 text.getSpans(0, text.length, Annotation::class.java)
-                    .filter { it.key == "format" && it.value == "bold" }
-                    .forEach { annotation ->
-                        spannableStringBuilder[text.getSpanStart(annotation)..text.getSpanEnd(annotation)] =
-                                StyleSpan(Typeface.BOLD)
-                    }
+                        .filter { it.key == "format" && it.value == "bold" }
+                        .forEach { annotation ->
+                            spannableStringBuilder[text.getSpanStart(annotation)..text.getSpanEnd(annotation)] =
+                                    StyleSpan(Typeface.BOLD)
+                        }
                 spannableStringBuilder.toSpannable()
             }.await()
         } else {
             text
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }
