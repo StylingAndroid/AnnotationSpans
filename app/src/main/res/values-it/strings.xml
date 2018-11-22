@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ordinals">Il 5<annotation format="superscript">o</annotation> piano o la 3<annotation format="superscript">a</annotation> pagina</string>
+</resources>

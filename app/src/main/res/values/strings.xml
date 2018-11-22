@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Annotation Spans</string>
-    <string name="annotated_text">This is a string containing an <annotation format="bold">annotation</annotation> which we can use to <annotation format="italic">style</annotation> the substrings</string>
+    <string name="annotated_text">This is a string containing an <annotation format="bold">annotation</annotation> which we can use to <annotation format="italic">style</annotation> the substrings we can also use it for superscript such as in the 5<annotation format="superscript">th</annotation> floor or the 3<annotation format="superscript">rd</annotation> page.</string>
+    <string name="ordinals">The 5<annotation format="superscript">th</annotation> floor or the 3<annotation format="superscript">rd</annotation> page</string>
 </resources>

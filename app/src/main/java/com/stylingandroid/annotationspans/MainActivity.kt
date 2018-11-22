@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.text.Annotation
 import android.text.SpannableStringBuilder
 import android.text.SpannedString
+import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.text.style.SuperscriptSpan
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.set
 import androidx.core.text.toSpannable
@@ -16,6 +18,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
+
+private const val RELATIVE_SIZE = 0.5f
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
@@ -40,15 +44,27 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             async(Dispatchers.IO) {
                 val spannableStringBuilder = SpannableStringBuilder(text)
                 text.getSpans(0, text.length, Annotation::class.java)
-                        .filter { it.key == "format" && it.value == "bold" }
+                        .filter { it.key == "format" }
                         .forEach { annotation ->
-                            spannableStringBuilder[text.getSpanStart(annotation)..text.getSpanEnd(annotation)] =
-                                    StyleSpan(Typeface.BOLD)
+                            text.processFormatAnnotations(annotation, spannableStringBuilder)
                         }
                 spannableStringBuilder.toSpannable()
             }.await()
         } else {
             text
+        }
+    }
+
+    private fun SpannedString.processFormatAnnotations(annotation: Annotation, output: SpannableStringBuilder) {
+        val start: Int = getSpanStart(annotation)
+        val end: Int = getSpanEnd(annotation)
+        when (annotation.value) {
+            "bold" -> output[start..end] = StyleSpan(Typeface.BOLD)
+            "italic" -> output[start..end] = StyleSpan(Typeface.ITALIC)
+            "superscript" -> {
+                output[start..end] = SuperscriptSpan()
+                output[start..end] = RelativeSizeSpan(RELATIVE_SIZE)
+            }
         }
     }
 
